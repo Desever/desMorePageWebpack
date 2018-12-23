@@ -7,6 +7,8 @@ const WebpackBar = require('webpackbar');
 //页面生成数组
 const {pageArray}=require("./page.config");
 
+
+
 //根目录rootDoc
 var webpackPluginsConfig=function(rootDoc,env){
 
@@ -39,7 +41,8 @@ var webpackPluginsConfig=function(rootDoc,env){
                 inject: 'footer',
                 template: 'html-withimg-loader!' + rootDoc + `/src/${pageArray[i]}.html`,
                 chunks: ["vendor","common",pageArray[i],],
-                inlineSource: '.(js|css)$'
+                inlineSource: '.(js|css)$',
+                loader: "raw-loader"
             })
         )
     }
@@ -47,7 +50,7 @@ var webpackPluginsConfig=function(rootDoc,env){
 
     //如果是生产环境，删除dist文件
     if(env=="pro"){
-        console.log("===================================dist目录删除中=======================");
+        
         addPageArray.push(
              //设置每一次build之前先删除dist
             new CleanWebpackPlugin(

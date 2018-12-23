@@ -17,10 +17,13 @@ module.exports = {
 	module: {
 		rules: [
 			{
-				test: /\.(htm|html)$/,
-				use: [
-				  'raw-loader'
-				]
+				test: /\.(html)$/,
+				use: {
+					loader: 'html-loader',
+					options: {
+					attrs: [':data-src']
+					}
+				}
 			},
 			{
 				test: /\.js$/,
