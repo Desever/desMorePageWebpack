@@ -3,16 +3,16 @@ const path = require('path')
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 //引入webpack插件配置
-const webpackPageConfig=require("./config/plugins.config")(__dirname);
-console.log("========================================欢迎使用des多页应用Webpack配置=================================");
+const webpackPluginsConfig=require("./config/plugins.config")(__dirname,'pro');
+console.log("========================================欢迎使用des多页应用Webpack配置pro中=================================");
 module.exports = {
 	// 配置入口
-	entry: webpackPageConfig.entry,
+	entry: webpackPluginsConfig.entry,
 	// 配置出口
 	output: {
 		path: __dirname + "/dist",
 		filename: 'js/[name].[hash:12].js',
-		publicPath: '/',
+		publicPath: './',
 	},
 	module: {
 		rules: [
@@ -81,7 +81,31 @@ module.exports = {
 			}
 		]
 	},
-	plugins:webpackPageConfig.addPageArray,
+	plugins:webpackPluginsConfig.addPageArray,
+
+	optimization: {
+		splitChunks: {
+		  cacheGroups: {
+			// 注意: priority属性
+			// 其次: 打包业务中公共代码
+			common: {
+			  name: "common",
+			  chunks: "all",
+			  minSize: 1,
+				priority: 0
+			},
+			// 首先: 打包node_modules中的文件
+			vendor: {
+			  name: "vendor",
+			  test: /[\\/]node_modules[\\/]/,
+			  chunks: "all",
+			  priority: 10
+			}
+		  }
+		}
+	  },
+	
+
 	// 起本地服务，我起的dist目录
 	devServer: {
 		contentBase:path.resolve(__dirname, 'dist'),

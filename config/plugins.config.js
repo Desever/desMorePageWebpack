@@ -8,7 +8,7 @@ const WebpackBar = require('webpackbar');
 const {pageArray}=require("./page.config");
 
 //根目录rootDoc
-var webpackPageConfig=function(rootDoc){
+var webpackPluginsConfig=function(rootDoc,env){
 
     var addPageArray=[
 
@@ -29,18 +29,7 @@ var webpackPageConfig=function(rootDoc){
         //压缩css
         new optimizeCss(),
     
-        //设置每一次build之前先删除dist
-        new CleanWebpackPlugin(
-            //匹配删除的文件
-            ['dist/*', 'dist/*', ], {
-                //根目录
-                root: rootDoc,
-                //开启在控制台输出信息
-                verbose: true,
-                //启用删除文件
-                dry: false
-            }
-        )
+       
     ]
     for(var i=0;i<pageArray.length;i++){
         addPageArray.push(
@@ -49,9 +38,29 @@ var webpackPageConfig=function(rootDoc){
                 filename: rootDoc + `/dist/${pageArray[i]}.html`,
                 inject: 'footer',
                 template: 'html-withimg-loader!' + rootDoc + `/src/${pageArray[i]}.html`,
-                chunks: [pageArray[i],"public"],
+                chunks: ["vendor","common",pageArray[i],],
                 inlineSource: '.(js|css)$'
             })
+        )
+    }
+
+
+    //如果是生产环境，删除dist文件
+    if(env=="pro"){
+        console.log("===================================dist目录删除中=======================");
+        addPageArray.push(
+             //设置每一次build之前先删除dist
+            new CleanWebpackPlugin(
+                //匹配删除的文件
+                ['dist/*', 'dist/*', ], {
+                    //根目录
+                    root: rootDoc,
+                    //开启在控制台输出信息
+                    verbose: true,
+                    //启用删除文件
+                    dry: false
+                }
+            )
         )
     }
 
@@ -67,4 +76,4 @@ var webpackPageConfig=function(rootDoc){
     };
 }
 
-module.exports = webpackPageConfig;
+module.exports = webpackPluginsConfig;
